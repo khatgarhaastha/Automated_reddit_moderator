@@ -5,8 +5,8 @@ from pymongo import MongoClient
 
 def main():
     print("Fetching the Reddit Data....")
-    subreddit_name = 'learnpython'
-    
+    subreddit_name = 'explainlikeimfive'
+
     # Reading config file for reddit credentials from JSON file
     with open('Configs/reddit.json') as f:
         config = json.load(f)
@@ -29,7 +29,7 @@ def main():
     for rule in subreddit.rules:
         rules.append(rule.short_name)
 
-    print("===============================================")
+
 
 
     if(len(rules)>0):
@@ -37,6 +37,11 @@ def main():
     else:
         print("No Rules Found....")
 
+    print("===============================================")
+    
+    print("Storing the Data into MongoDB....")
+
+    # Connecting to the MongoDB
     client = MongoClient("mongodb+srv://bhavinmongocluster.5t6smyb.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority",
                     tls=True,
                     tlsCertificateKeyFile='./Certs/X509-cert-4153501619407879612.pem')
