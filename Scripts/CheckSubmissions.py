@@ -32,7 +32,7 @@ def main():
     for i, rule in enumerate(response): 
         rules.append(str(i+1) +". "+ rule['rule'])
 
-    rules = "\n".join(rules)
+    rules = "\n".join(rules)                                   
 
     #print(rules)
     # Fetch the submissions from the subreddit
