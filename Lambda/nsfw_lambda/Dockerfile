@@ -1,7 +1,11 @@
 FROM amazon/aws-lambda-python:3.9
 
 
-RUN pip3 install torch
+# Install gcc and other build tools
+RUN yum update -y && \
+    yum install -y gcc gcc-c++ make openssl-devel bzip2-devel libffi-devel zlib-devel
+
+RUN pip3 install torch 
 # Install dependencies
 RUN pip install --no-cache-dir boto3 botocore transformers
 
