@@ -20,14 +20,13 @@ def insert_items_into_dynamodb(table_name, items):
 # Function to parse text list as NSFW or SFW
 def parse_nsfw_sfw(submissions):
 
-    result = []
-
     # Define the model from HuggingFace Transformers
     pipe = pipeline("text-classification", model="michellejieli/NSFW_text_classifier")
 
     for submission in submissions:
-        text = submission['submissiontext']
-        prediction = pipe(text)
+        text = submission['submission_text']
+        prediction = pipe(text)[0]
+        prediction['score'] = str(prediction['score'])
         submission['nsfw_tags'] = prediction
     
     return submissions
@@ -36,13 +35,13 @@ def parse_nsfw_sfw(submissions):
 def lambda_handler(event, context):
 
     # Fetch the items from DynamoDB table
-    submissions = fetch_items_from_dynamodb('Submissions')
+    submissions = fetch_items_from_dynamodb('reddit-submissions')
 
     # Parse the submissions
     submissions = parse_nsfw_sfw(submissions)
 
     # Insert the items into DynamoDB table
-    insert_items_into_dynamodb('Submissions', submissions)
+    insert_items_into_dynamodb('reddit-submissions', submissions)
 
     return {
         'statusCode': 200,
