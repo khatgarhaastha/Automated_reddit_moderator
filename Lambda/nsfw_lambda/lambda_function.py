@@ -3,10 +3,13 @@ import boto3
 from transformers import pipeline
 
 # Fetch the items from DynamoDB table
-def fetch_items_from_dynamodb(table_name):
+def fetch_items_from_dynamodb(table_name, limit=None):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(table_name)
-    response = table.scan()
+    if limit:
+        response = table.scan(Limit=limit)
+    else:
+        response = table.scan()
     items = response['Items']
     return items
 
@@ -33,9 +36,13 @@ def parse_nsfw_sfw(submissions):
 
 # Lambda function handler
 def lambda_handler(event, context):
+    limit = None
 
     # Fetch the items from DynamoDB table
-    submissions = fetch_items_from_dynamodb('reddit-submissions')
+    if 'limit' in event:
+        limit = event['limit']
+    
+    submissions = fetch_items_from_dynamodb('reddit-submissions', limit)
 
     # Parse the submissions
     submissions = parse_nsfw_sfw(submissions)
