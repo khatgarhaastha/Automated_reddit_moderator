@@ -35,12 +35,7 @@ def parse_nsfw_sfw(submissions):
     return submissions
 
 # Lambda function handler
-def lambda_handler(event, context):
-    limit = None
-
-    # Fetch the items from DynamoDB table
-    if 'limit' in event:
-        limit = event['limit']
+def lambda_handler(limit = None):
     
     submissions = fetch_items_from_dynamodb('reddit-submissions', limit)
 
