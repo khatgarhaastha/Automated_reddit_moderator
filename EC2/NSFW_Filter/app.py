@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 @app.route('/classify', methods=['POST'])
 def classify():
+    print("Request received", request.get_json())
     # Get 'limit' from the request body (if provided)
     data = request.get_json()
     limit = data.get('limit', None) if data else None

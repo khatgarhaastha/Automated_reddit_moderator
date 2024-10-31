@@ -1,21 +1,24 @@
 
 import boto3 
 from transformers import pipeline
+from boto3.dynamodb.conditions import Attr
 
 # Fetch the items from DynamoDB table
 def fetch_items_from_dynamodb(table_name, limit=None):
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
     table = dynamodb.Table(table_name)
+    filter_expression = Attr('label').not_exists() | Attr('label').eq('')
+
     if limit:
-        response = table.scan(Limit=limit)
+        response = table.scan(FilterExpression = filter_expression, Limit=limit)
     else:
-        response = table.scan()
+        response = table.scan(FilterExpression = filter_expression)
     items = response['Items']
     return items
 
 # Insert items into DynamoDB table
 def insert_items_into_dynamodb(table_name, items):
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
     table = dynamodb.Table(table_name)
     for item in items:  
         table.put_item(Item=item)
@@ -24,13 +27,18 @@ def insert_items_into_dynamodb(table_name, items):
 def parse_nsfw_sfw(submissions):
 
     # Define the model from HuggingFace Transformers
-    pipe = pipeline("text-classification", model="michellejieli/NSFW_text_classifier")
+    pipe = pipeline("text-classification", model="michellejieli/NSFW_text_classifier", truncation=True, max_length=512)
 
-    for submission in submissions:
+    for i,submission in enumerate(submissions):
         text = submission['submission_text']
-        prediction = pipe(text)[0]
-        prediction['score'] = str(prediction['score'])
-        submission['nsfw_tags'] = prediction
+        print(f'Processing submission Number :{i}\nText : {text}')
+        if(text != None and len(text) > 0):
+            prediction = pipe(text)[0]
+            print(f'Prediction : {prediction}\n\n')
+            submission['score'] = str(prediction['score'])
+            submission['label'] = prediction['label']
+        else:
+            print(f'No text found for this submission')
     
     return submissions
 
