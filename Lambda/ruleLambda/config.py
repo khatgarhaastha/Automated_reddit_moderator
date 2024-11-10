@@ -1,0 +1,1 @@
+ollama_ec2_url = 'http://localhost:11434/api/generate/'

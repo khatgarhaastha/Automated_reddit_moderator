@@ -5,7 +5,7 @@ from boto3.dynamodb.conditions import Attr
 
 # Fetch the items from DynamoDB table
 def fetch_items_from_dynamodb(table_name, limit=None):
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
+    dynamodb = boto3.resource('dynamodb')
     filter_expression = Attr("processed_nsfw").eq(False)
 
     table = dynamodb.Table(table_name)
@@ -14,8 +14,6 @@ def fetch_items_from_dynamodb(table_name, limit=None):
     else:
         response = table.scan(FilterExpression=filter_expression)
     items = response['Items']
-
-    print(f'Fetched {len(items)} items from DynamoDB table {table_name}')
     return items
 
 # Insert items into DynamoDB table
@@ -24,8 +22,6 @@ def insert_items_into_dynamodb(table_name, items):
     table = dynamodb.Table(table_name)
     for item in items:  
         table.put_item(Item=item)
-
-    print(f'Inserted {len(items)} items into DynamoDB table {table_name}')
 
 # Function to parse text list as NSFW or SFW
 def parse_nsfw_sfw(submissions):
@@ -39,8 +35,6 @@ def parse_nsfw_sfw(submissions):
     for submission, prediction in zip(submissions, predictions):
         submission['score'] = str(prediction['score'])
         submission['label'] = prediction['label']
-    
-    print(f'Parsed {len(submissions)} submissions')
     
     return submissions
 
