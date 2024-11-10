@@ -183,7 +183,9 @@ def storingSubmissions(subreddit_name, submission_id, submission_text):
             Item={
                 'subreddit': subreddit_name,
                 'submission_id': submission_id,
-                'submission_text': submission_text
+                'submission_text': submission_text,
+                'processed_nsfw': False,
+                'processed_rules': False
             }
         )
         print(f"Submission with ID {submission_id} stored successfully.")

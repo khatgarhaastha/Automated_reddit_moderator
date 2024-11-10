@@ -1,4 +1,5 @@
-FROM amazon/aws-lambda-python:3.9
+# Use --platform=linux/amd64 to force compatibility on Apple Silicon Macs
+FROM --platform=linux/amd64 amazon/aws-lambda-python:3.9
 
 # Install dependencies
 RUN pip install --no-cache-dir boto3 botocore praw
