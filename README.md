@@ -30,7 +30,7 @@ This project is an **LLM-powered moderation tool** for Reddit that periodically 
 ````
 ## Project Architecture
 
-![Architecture](architecture.png)
+![Architecture](RedditModArchitecture.png)
 
 
 ## How It Works
